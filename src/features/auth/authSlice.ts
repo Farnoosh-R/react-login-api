@@ -10,8 +10,8 @@ interface authState {
     
 }
 const initialState: authState = {
-    user: null,
-    token: null,
+    user: JSON.parse(localStorage.getItem("user") || null),
+    token: localStorage.getItem("token"),
     loading: false,
     error: null
 }
@@ -29,6 +29,8 @@ const authSlice = createSlice({
         logout(state) {
             state.token = null;
             state.user = null;
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
         },
     },
     extraReducers: (builder) => {
@@ -42,6 +44,8 @@ const authSlice = createSlice({
                 username: action.payload.username,
                 email: action.payload.email
             }
+            localStorage.setItem("token", action.payload.accessToken)
+            localStorage.setItem("user", JSON.stringify(action.payload.username))
         })
         .addCase(login.pending, (state) => {
             state.loading = true;
